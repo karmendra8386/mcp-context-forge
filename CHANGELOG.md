@@ -9,6 +9,10 @@
 
 ## [Unreleased]
 
+### Security
+
+- **Identity claim signing covers every claim** - With `IDENTITY_SIGN_CLAIMS=true`, `X-Forwarded-User-Claims-Signature` and `_meta.user.claims_signature` now carry an HS256 JWS over all propagated identity claims, including the admin flag, teams, roles, groups, and delegation chain. The token has `iss`, `aud` (target gateway id), a 60-second `exp`, and a `jti`. Signing requires a dedicated `IDENTITY_CLAIMS_SECRET`; the gateway no longer falls back to `JWT_SECRET_KEY` and refuses to start without the secret or with a secret equal to `JWT_SECRET_KEY`. **Breaking:** upstream verifiers of the old hex HMAC must switch to JWS verification. See [Identity Propagation](docs/docs/manage/identity-propagation.md#claim-signing). If an earlier deployment ran with signing on and no `IDENTITY_CLAIMS_SECRET`, rotate `JWT_SECRET_KEY`.
+
 ### Added
 
 - **AWS Signature V4 signing for REST tools** ([#7561](https://github.com/IBM/mcp-context-forge/issues/7561), [#6810](https://github.com/IBM/mcp-context-forge/issues/6810)) - A REST tool accepts `auth_type: "sigv4"`. A standalone tool carries its own `sigv4_config`. A tool under a SigV4 gateway inherits the gateway credential.
